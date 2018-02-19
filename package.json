@@ -1,9 +1,10 @@
 {
-  "name": "flip-counter",
-  "version": "1.0.0",
+  "name": "flip-counter-js",
+  "version": "1.0.1",
   "description": "This project creates a configurable flip counter using CSS3 animations.",
   "main": "index.js",
   "private": false,
+  "repository": "https://github.com/BrianJZhang/flip-counter",
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",

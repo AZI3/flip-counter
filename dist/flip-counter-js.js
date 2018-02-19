@@ -68,34 +68,38 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-__webpack_require__(2);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-(function (undefined) {
-    "use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-    var elClassName = 'flip-counter';
-    var _global = function () {
-        return this || (0, eval)('this');
-    }();
-    var document = _global.document;
-    var defaults = {
-        step: 1,
-        speed: 0,
-        minDigits: 4,
-        start: 0
-    };
-    var extend = function extend(target, defaults) {
-        for (var p in defaults) {
-            if (!target.hasOwnProperty(p)) target[p] = defaults[p];
-        }
-        return target;
-    };
+__webpack_require__(1);
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+"use strict";
+
+var document = window.document;
+var defaults = {
+    step: 1,
+    speed: 0,
+    minDigits: 4,
+    start: 0
+};
+var extend = function extend(target, defaults) {
+    for (var p in defaults) {
+        if (!target.hasOwnProperty(p)) target[p] = defaults[p];
+    }
+    return target;
+};
+
+var FlipCounter = function () {
     function FlipCounter(element, options) {
+        _classCallCheck(this, FlipCounter);
+
         this.element = element;
         if (!options) {
             options = {};
@@ -112,41 +116,16 @@ __webpack_require__(2);
         }
     }
 
-    var numberToArray = function numberToArray(number) {
-        if (isNaN(number)) {
-            return [];
-        }
-        return number.toString().split("").reverse();
-    };
-
-    function createDigitCardContainer(oldVal, newVal) {
-        return '<div class="dcc">\n' + '        <div class="tile front"><span class="digit">' + newVal + '</span></div>\n' + '        <div class="hinge"></div>\n' + '        <div class="tile back"><span class="digit">' + oldVal + '</span></div>\n' + '        <div class="perspective-wrapper">\n' + '            <div class="switchover">\n' + '                <div class="tile front"><span class="digit">' + oldVal + '</span></div>\n' + '                <div class="tile back"><span class="digit">' + newVal + '</span></div>\n' + '            </div>\n' + '        </div>\n' + '    </div>';
-    }
-
-    function parseDom(html) {
-        var temp = document.createElement("div");
-        temp.innerHTML = html;
-        return temp.childNodes[0];
-    }
-
-    function fillingZeros(minDigits, numberArray) {
-        var diff = minDigits - numberArray.length;
-        while (diff > 0) {
-            numberArray.push('0');
-            diff--;
-        }
-        return numberArray;
-    }
-
-    FlipCounter.prototype = {
-        init: function init() {
+    _createClass(FlipCounter, [{
+        key: 'init',
+        value: function init() {
             var container = this.element;
             var fc = document.createElement('div');
             fc.classList.add('fc');
             container.appendChild(fc);
             this.numberArray = numberToArray(this.counter);
             this.numberArray = fillingZeros(this.options.minDigits, this.numberArray);
-            var i;
+            var i = void 0;
             var html = '';
             for (i = 0; i < this.numberArray.length; i++) {
                 var value = this.numberArray[i];
@@ -154,12 +133,15 @@ __webpack_require__(2);
             }
 
             fc.innerHTML = html;
-        },
-        increment: function increment(value) {
-            if (!value || isNaN(value)) {
-                value = this.options.step;
+        }
+    }, {
+        key: 'increment',
+        value: function increment(value) {
+            var val = value;
+            if (!val || isNaN(val)) {
+                val = this.options.step;
             }
-            var newCounter = this.counter + value;
+            var newCounter = this.counter + val;
             var newNumberArray = numberToArray(newCounter);
             newNumberArray = fillingZeros(this.options.minDigits, newNumberArray);
             var oldNumberArray = this.numberArray;
@@ -168,8 +150,8 @@ __webpack_require__(2);
             while (i >= 0) {
 
                 if (i > oldNumberArray.length - 1) {
-                    var value = newNumberArray[i];
-                    fc.innerHTML += createDigitCardContainer(value, value);
+                    var v = newNumberArray[i];
+                    fc.innerHTML += createDigitCardContainer(v, v);
                 } else if (newNumberArray[i] != oldNumberArray[i]) {
                     var dcc = fc.getElementsByClassName('dcc')[i];
                     var newFront = dcc.querySelector('.front .digit');
@@ -190,59 +172,46 @@ __webpack_require__(2);
             this.counter = newCounter;
             this.numberArray = newNumberArray;
         }
-    };
-    FlipCounter.prototype.constructor = FlipCounter;
+    }]);
 
-    if (( false ? 'undefined' : _typeof(module)) === 'object' && module && _typeof(module.exports) === 'object') {
-        module.exports = FlipCounter;
-    } else {
-        if (true) {
-            !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-                return FlipCounter;
-            }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-        }
+    return FlipCounter;
+}();
+
+exports.default = FlipCounter;
+
+
+function numberToArray(number) {
+    if (isNaN(number)) {
+        return [];
     }
-    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && _typeof(window.document) === 'object') {
-        window.FlipCounter = FlipCounter;
+    return number.toString().split("").reverse();
+}
+
+function createDigitCardContainer(oldVal, newVal) {
+    return '<div class="dcc">\n' + '        <div class="tile front"><span class="digit">' + newVal + '</span></div>\n' + '        <div class="hinge"></div>\n' + '        <div class="tile back"><span class="digit">' + oldVal + '</span></div>\n' + '        <div class="perspective-wrapper">\n' + '            <div class="switchover">\n' + '                <div class="tile front"><span class="digit">' + oldVal + '</span></div>\n' + '                <div class="tile back"><span class="digit">' + newVal + '</span></div>\n' + '            </div>\n' + '        </div>\n' + '    </div>';
+}
+
+function parseDom(html) {
+    var temp = document.createElement("div");
+    temp.innerHTML = html;
+    return temp.childNodes[0];
+}
+
+function fillingZeros(minDigits, numberArray) {
+    var diff = minDigits - numberArray.length;
+    while (diff > 0) {
+        numberArray.push('0');
+        diff--;
     }
-})();
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+    return numberArray;
+}
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=flipCounter.js.map
+//# sourceMappingURL=flip-counter-js.js.map

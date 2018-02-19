@@ -1,7 +1,6 @@
 'use strict';
 
 var path = require('path');
-var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var styleLintPlugin = require('stylelint-webpack-plugin');
 
@@ -9,7 +8,7 @@ module.exports = {
     entry: __dirname + "/app.js",
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: "flipCounter.js"
+        filename: "flip-counter-js.js"
     },
     devtool: 'source-map',
     // watch: true,

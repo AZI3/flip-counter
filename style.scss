@@ -1,0 +1,106 @@
+$digitCardWidth: 15px;
+$digitCardHeight: 24px;
+$digitFontSize: 24px;
+$spacing: 2px;
+$radius: 2px;
+
+.fc {
+  width: 100%;
+}
+
+.fc::before {
+  display: table;
+  content: " ";
+}
+
+.fc::after {
+  display: table;
+  content: " ";
+  clear: both;
+}
+
+.fc .dcc {
+  width: $digitCardWidth;
+  height: $digitCardHeight;
+  background-color: #222222;
+  text-align: center;
+  box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.5);
+  border-radius: $radius;
+  float: right;
+  margin-left: $spacing;
+  position: relative;
+  color: #ffffff;
+  font-family: sans-serif;
+  font-size: $digitFontSize;
+}
+
+.fc .dcc .hinge {
+  width: $digitCardWidth;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.75);
+  box-shadow: 0 5px 7px -4px rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: $digitCardHeight / 2;
+  z-index: 9;
+}
+
+.fc .dcc .tile {
+  position: absolute;
+  left: 0;
+  width: $digitCardWidth;
+  height: $digitCardHeight / 2;
+  border-radius: $radius;
+  overflow: hidden;
+  background-color: #222222;
+  line-height: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.fc .dcc .tile.front {
+  top: 0;
+}
+
+.fc .dcc .tile.back {
+  bottom: 0;
+}
+
+.fc .dcc .digit {
+  position: absolute;
+  height: $digitCardHeight / 2;
+  width: 100%;
+  left: 0;
+}
+
+.fc .dcc .front .digit {
+  top: 0;
+}
+
+.fc .dcc .back .digit {
+  bottom: 0;
+  padding-bottom: $digitCardHeight / 2;
+}
+
+.fc .dcc .perspective-wrapper {
+  z-index: 8;
+  perspective: 400px;
+}
+
+.fc .dcc .switchover {
+  width: $digitCardWidth;
+  height: $digitCardHeight / 2;
+  transform-style: preserve-3d;
+  transform-origin: 50% 100%;
+  transition: transform 0.5s ease-in;
+}
+
+.fc .dcc.animate .switchover {
+  transform: rotateX(-180deg);
+}
+
+.fc .dcc .switchover .front {
+  backface-visibility: hidden;
+}
+
+.fc .dcc .switchover .back {
+  backface-visibility: hidden;
+  transform: rotateX(180deg);
+}

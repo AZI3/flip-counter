@@ -1,14 +1,19 @@
 'use strict';
 
-var path = require('path');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var styleLintPlugin = require('stylelint-webpack-plugin');
+const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const styleLintPlugin = require('stylelint-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 
 module.exports = {
-    entry: __dirname + "/app.js",
+    entry: __dirname + '/app.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: "flip-counter-js.js"
+        filename: 'flip-counter-js.js',
+        library: 'FlipCounterJs',
+        libraryTarget: 'umd',
+        umdNamedDefine: true
     },
     devtool: 'source-map',
     // watch: true,
@@ -30,6 +35,17 @@ module.exports = {
             syntax: 'scss',
             failOnError: false,
             quiet: false
+        }),
+        new UglifyJsPlugin({
+            // sourceMap: true,
+            uglifyOptions: {
+                compress: {
+                    warnings: false
+                },
+                output: {
+                    comments: false
+                }
+            }
         })
     ],
     module: {

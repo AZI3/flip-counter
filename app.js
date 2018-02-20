@@ -1,6 +1,6 @@
 import './style.scss';
 
-"use strict";
+'use strict';
 
 let document = window.document;
 let defaults = {
@@ -17,7 +17,7 @@ let extend = function (target, defaults) {
     return target;
 };
 
-export default class FlipCounter {
+export default class FlipCounterJs {
     constructor(element, options) {
         this.element = element;
         if (!options) {

@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const styleLintPlugin = require('stylelint-webpack-plugin');
 
 module.exports = {
@@ -11,7 +10,6 @@ module.exports = {
     },
 
     plugins: [
-        new ExtractTextPlugin('css/style.min.css'),
         new styleLintPlugin({
             configFile: '.stylelintrc',
             context: '',
@@ -29,22 +27,6 @@ module.exports = {
                 use: [
                     'babel-loader'
                 ]
-            },
-            {
-                test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                minimize: true
-                            }
-                        },
-                        {loader: 'postcss-loader'},
-                        {loader: 'sass-loader'}
-                    ]
-                })
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,

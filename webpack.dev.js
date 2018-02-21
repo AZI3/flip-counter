@@ -15,7 +15,8 @@ module.exports = merge(common, {
         index: 'index.html',
         hot: true,
         inline: true,
-        historyApiFallback: true
+        historyApiFallback: true,
+        overlay: true
     },
     module: {
         rules: [

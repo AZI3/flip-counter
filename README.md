@@ -35,3 +35,4 @@ step|Number|1|The amount by which the value increases every time.
 speed|Number|0|The rate at which the value increases. Unit is _milliseconds_.
 minDigits|Number|4|The minimum number of digits to show. You may expect leading zeros.
 start|Number|0|The initial value.
+size|String|'sm'|Possible values: _xs_, _sm_, _md_, _lg_.

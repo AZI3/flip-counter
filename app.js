@@ -11,7 +11,8 @@ let defaults = {
     step: 1,
     speed: 0,
     minDigits: 4,
-    start: 0
+    start: 0,
+    size: 'sm'
 };
 let extend = function (target, defaults) {
     for (let p in defaults) {
@@ -43,6 +44,7 @@ export default class FlipCounterJs {
         let container = this.element;
         let fc = document.createElement('div');
         fc.classList.add('fc');
+        fc.classList.add('fc-size-' + this.options.size);
         container.appendChild(fc);
         this.numberArray = numberToArray(this.counter);
         this.numberArray = fillingZeros(this.options.minDigits, this.numberArray);

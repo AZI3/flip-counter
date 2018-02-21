@@ -2,6 +2,10 @@ import './style.scss';
 
 'use strict';
 
+if (process.env.NODE_ENV === 'production') {
+    console.log('FlipCounterJs production mode.');
+}
+
 let document = window.document;
 let defaults = {
     step: 1,
@@ -94,7 +98,7 @@ function numberToArray(number) {
     if (isNaN(number)) {
         return []
     }
-    return number.toString().split("").reverse();
+    return number.toString().split('').reverse();
 }
 
 function createDigitCardContainer(oldVal, newVal) {
@@ -112,7 +116,7 @@ function createDigitCardContainer(oldVal, newVal) {
 }
 
 function parseDom(html) {
-    let temp = document.createElement("div");
+    let temp = document.createElement('div');
     temp.innerHTML = html;
     return temp.childNodes[0];
 }

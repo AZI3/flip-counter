@@ -1,4 +1,4 @@
-# flip-counter [![NPM version](https://img.shields.io/npm/v/vue-quick-menu.svg)](https://www.npmjs.com/package/flip-counter-js)
+# flip-counter [![NPM version](https://img.shields.io/npm/v/flip-counter-js.svg)](https://www.npmjs.com/package/flip-counter-js)
 
 > This is a Flip Counter component with CSS3 animation style. It can be extended to use as a timer, countdown or else that can be represented with digits. 
 [demo](https://brianjzhang.github.io/flip-counter-js/index.html)

@@ -32,6 +32,10 @@ export default class FlipCounterJs {
         this.counter = this.options.start;
         this.init();
         if (this.options.speed > 0) {
+            if (this.options.speed < 500) {
+                this.options.speed = 500;
+                console.log('[FlipCounterJs] The speed can\'t be quicker than 500ms, it\'s automatically adjusted.');
+            }
             (function (self) {
                 setInterval(function () {
                     self.increment(self.options.step)
@@ -45,6 +49,7 @@ export default class FlipCounterJs {
         let fc = document.createElement('div');
         fc.classList.add('fc');
         fc.classList.add('fc-size-' + this.options.size);
+        container.innerHTML = '';
         container.appendChild(fc);
         this.numberArray = numberToArray(this.counter);
         this.numberArray = fillingZeros(this.options.minDigits, this.numberArray);
@@ -63,7 +68,7 @@ export default class FlipCounterJs {
         if (!val || isNaN(val)) {
             val = this.options.step;
         }
-        let newCounter = this.counter + val;
+        let newCounter = parseInt(this.counter) + parseInt(val);
         let newNumberArray = numberToArray(newCounter);
         newNumberArray = fillingZeros(this.options.minDigits, newNumberArray);
         let oldNumberArray = this.numberArray;
@@ -83,11 +88,11 @@ export default class FlipCounterJs {
                 let oldFront = dcc.querySelector('.perspective-wrapper .switchover .front .digit');
                 newBack.innerHTML = newNumberArray[i];
                 dcc.classList.add('animate');
-                (function (i, dcc) {
+                (function (i, fc, dcc) {
                     setTimeout(function () {
                         fc.replaceChild(parseDom(createDigitCardContainer(newNumberArray[i], newNumberArray[i])), dcc);
                     }, 400)
-                })(i, dcc);
+                })(i, fc, dcc);
             }
             i--;
         }
@@ -132,3 +137,16 @@ function fillingZeros(minDigits, numberArray) {
     return numberArray;
 }
 
+(window => {
+    let elements = window.document.querySelectorAll('[data-flip-counter-js]');
+    for (let el of elements) {
+        let options = {};
+        for (let key of Object.keys(defaults)) {
+            var attrName = 'data-fc-' + key;
+            if (el.hasAttribute(attrName)) {
+                options[key] = el.getAttribute(attrName);
+            }
+        }
+        new FlipCounterJs(el, options);
+    }
+})(window);

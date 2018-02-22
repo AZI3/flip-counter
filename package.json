@@ -1,6 +1,6 @@
 {
   "name": "flip-counter-js",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "This project creates a configurable flip counter using CSS3 animations.",
   "main": "app.js",
   "private": false,

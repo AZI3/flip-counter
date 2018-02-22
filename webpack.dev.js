@@ -10,12 +10,12 @@ module.exports = merge(common, {
         filename: 'dev.js',
     },
     devServer: {
+        contentBase: 'dist/',
         compress: true,
         port: 3001,
-        index: 'index.html',
         hot: true,
         inline: true,
-        historyApiFallback: true,
+        // historyApiFallback: true,
         overlay: true
     },
     module: {

@@ -12,7 +12,8 @@ let defaults = {
     speed: 0,
     minDigits: 4,
     start: 0,
-    size: 'sm'
+    size: 'sm',
+    mode: 'up'
 };
 let extend = function (target, defaults) {
     for (let p in defaults) {
@@ -37,9 +38,10 @@ export default class FlipCounterJs {
                 console.log('[FlipCounterJs] The speed can\'t be quicker than 500ms, it\'s automatically adjusted.');
             }
             (function (self) {
-                setInterval(function () {
-                    self.increment(self.options.step)
+                var timer = setInterval(function () {
+                    self.update(self.options.step)
                 }, self.options.speed);
+                self.fcTimer = timer;
             })(this);
         }
     }
@@ -63,12 +65,24 @@ export default class FlipCounterJs {
         fc.innerHTML = html;
     }
 
-    increment(value) {
+    update(value) {
+        var mode = this.options.mode === 'down';
+        if (mode && this.counter == 0) {
+            clearInterval(fcTimer);
+            return;
+        }
+
         let val = value;
         if (!val || isNaN(val)) {
             val = this.options.step;
         }
-        let newCounter = parseInt(this.counter) + parseInt(val);
+        let newCounter;
+        if (mode) {
+            newCounter = parseInt(this.counter) - parseInt(val) >= 0 ? parseInt(this.counter) - parseInt(val) : 0;
+        } else {
+            newCounter = parseInt(this.counter) + parseInt(val);
+        }
+
         let newNumberArray = numberToArray(newCounter);
         newNumberArray = fillingZeros(this.options.minDigits, newNumberArray);
         let oldNumberArray = this.numberArray;

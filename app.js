@@ -3,7 +3,7 @@ import './style.scss';
 'use strict';
 
 if (process.env.NODE_ENV === 'production') {
-    console.log('FlipCounterJs production mode.');
+    console.log('[FlipCounterJs] production mode.');
 }
 
 let document = window.document;
@@ -15,33 +15,59 @@ let defaults = {
     size: 'sm',
     mode: 'up'
 };
-let extend = function (target, defaults) {
+const EVENT_MAP = {
+    UPDATE_DONE: 'update_done',
+    TARGET_REACHED: 'target_reached'
+};
+
+let promiseArray = [];
+let updatePromise = Promise.resolve(null);
+
+function whichTransitionEvent() {
+    let t;
+    const el = document.createElement('fakeelement');
+    const transitions = {
+        'transition': 'transitionend',
+        'OTransition': 'oTransitionEnd',
+        'MozTransition': 'transitionend',
+        'WebkitTransition': 'webkitTransitionEnd'
+    };
+    for (t in transitions) {
+        if (el.style[t] !== undefined) {
+            return transitions[t];
+        }
+    }
+}
+
+function extendObj(target, defaults) {
     for (let p in defaults) {
         if ((!target.hasOwnProperty(p)))
             target[p] = defaults[p];
     }
     return target;
-};
+}
 
 export default class FlipCounterJs {
-    constructor(element, options) {
+    constructor(element, options, events) {
         this.element = element;
         if (!options) {
             options = {};
         }
-        this.options = extend(options, defaults);
+        this.options = extendObj(options, defaults);
         this.counter = this.options.start;
+        this.events = events;
+
         this.init();
         if (this.options.speed > 0) {
+            this.auto = true;
             if (this.options.speed < 500) {
                 this.options.speed = 500;
-                console.log('[FlipCounterJs] The speed can\'t be quicker than 500ms, it\'s automatically adjusted.');
+                console.log('[FlipCounterJs] The speed can\'t be quicker(<) than 500ms, it\'s automatically adjusted.');
             }
             (function (self) {
-                var timer = setInterval(function () {
-                    self.update(self.options.step)
+                setTimeout(function () {
+                    self.update(self.options.step);
                 }, self.options.speed);
-                self.fcTimer = timer;
             })(this);
         }
     }
@@ -66,11 +92,7 @@ export default class FlipCounterJs {
     }
 
     update(value) {
-        var mode = this.options.mode === 'down';
-        if (mode && this.counter == 0) {
-            clearInterval(fcTimer);
-            return;
-        }
+        const mode = this.options.mode === 'down';
 
         let val = value;
         if (!val || isNaN(val)) {
@@ -88,30 +110,55 @@ export default class FlipCounterJs {
         let oldNumberArray = this.numberArray;
         let fc = this.element.getElementsByClassName('fc')[0];
         let i = newNumberArray.length - 1;
+        promiseArray = [];
+        let transitionEventStatus = {};
         while (i >= 0) {
-
-            if (i > oldNumberArray.length - 1) {
-                let v = newNumberArray[i];
-                fc.innerHTML += createDigitCardContainer(v, v);
-            } else if (newNumberArray[i] != oldNumberArray[i]) {
-                let dcc = fc.getElementsByClassName('dcc')[i];
-                let newFront = dcc.querySelector('.front .digit');
-                let oldBack = dcc.querySelector('.back .digit');
-                newFront.innerHTML = newNumberArray[i];
-                let newBack = dcc.querySelector('.perspective-wrapper .switchover .back .digit');
-                let oldFront = dcc.querySelector('.perspective-wrapper .switchover .front .digit');
-                newBack.innerHTML = newNumberArray[i];
-                dcc.classList.add('animate');
-                (function (i, fc, dcc) {
-                    setTimeout(function () {
-                        fc.replaceChild(parseDom(createDigitCardContainer(newNumberArray[i], newNumberArray[i])), dcc);
-                    }, 400)
-                })(i, fc, dcc);
-            }
-            i--;
+            transitionEventStatus[i] = false;
+            promiseArray.push(new Promise((resolve, reject) => {
+                if (i > oldNumberArray.length - 1) {
+                    let v = newNumberArray[i];
+                    fc.innerHTML += createDigitCardContainer(v, v);
+                    resolve(newNumberArray[i]);
+                } else if (newNumberArray[i] != oldNumberArray[i]) {
+                    let dcc = fc.getElementsByClassName('dcc')[i];
+                    let newFront = dcc.querySelector('.front .digit');
+                    let oldBack = dcc.querySelector('.back .digit');
+                    newFront.innerHTML = newNumberArray[i];
+                    let newBack = dcc.querySelector('.perspective-wrapper .switchover .back .digit');
+                    let oldFront = dcc.querySelector('.perspective-wrapper .switchover .front .digit');
+                    newBack.innerHTML = newNumberArray[i];
+                    let newDigit = newNumberArray[i];
+                    dcc.classList.add('animate');
+                    let handler = (fc, dcc, newDigit, resolve, transitionEventStatus, i) => {
+                        transitionEventStatus[i] = true;
+                        dcc.removeEventListener(whichTransitionEvent(), handler);
+                        fc.replaceChild(parseDom(createDigitCardContainer(newDigit, newDigit)), dcc);
+                        if (self.events && self.events[EVENT_MAP.UPDATE_DONE]) {
+                            self.events[EVENT_MAP.UPDATE_DONE](newCounter);
+                        }
+                        resolve(newDigit);
+                    };
+                    (function (fc, dcc, newDigit, resolve, transitionEventStatus, i, speed) {
+                        dcc.addEventListener(whichTransitionEvent(), (e) => handler(fc, dcc, newDigit, resolve, transitionEventStatus, i));
+                        setTimeout(() => {
+                            if (!transitionEventStatus[i]) {
+                                handler(fc, dcc, newDigit, resolve, transitionEventStatus, i);
+                            }
+                        }, speed);
+                    })(fc, dcc, newDigit, resolve, transitionEventStatus, i, this.options.speed);
+                } else {
+                    resolve(newNumberArray[i]);
+                }
+                i--;
+            }));
         }
-        this.counter = newCounter;
-        this.numberArray = newNumberArray;
+        Promise.all(promiseArray).then(() => {
+            this.counter = newCounter;
+            this.numberArray = newNumberArray;
+            if (this.auto && !(this.options.mode === 'down' && this.counter == 0)) {
+                this.update(this.options.step);
+            }
+        });
     }
 }
 
@@ -149,6 +196,21 @@ function fillingZeros(minDigits, numberArray) {
         diff--;
     }
     return numberArray;
+}
+
+function emulateTransitionEnd(duration) {
+    var called = false;
+    var $el = this;
+    $(this).one($.support.transition.end, function () {
+        called = true;
+    });
+    var callback = function () {
+        if (!called) {
+            $($el).trigger($.support.transition.end);
+        }
+    };
+    setTimeout(callback, duration);
+    return this;
 }
 
 (window => {
